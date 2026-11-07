@@ -1,12 +1,17 @@
 import feedparser
 
-feed = feedparser.parse("https://lenta.ru/rss")
+addresses = ["https://lenta.ru/rss", "https://tass.ru/rss/v2.xml", "https://www.interfax.ru/rss.asp"]
+for address in addresses:
+    print(address)
 
-print("Источник:", feed.feed.title)
-print("Новостей:", len(feed.entries))
+    feed = feedparser.parse(address)
 
-for entry in feed.entries:
-    print(entry.title)
-    print(entry.link)
-    print(entry.get("published", "нет даты"))
-    print("---")
+
+    print("Источник:", feed.feed.title)
+    print("Новостей:", len(feed.entries))
+
+    for entry in feed.entries:
+        print(entry.title)
+        print(entry.link)
+        print(entry.get("published", "нет даты"))
+        print("---")
