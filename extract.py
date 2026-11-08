@@ -1,10 +1,9 @@
 import feedparser
+import requests
 
-addresses = ["https://lenta.ru/rss", "https://www.interfax.ru/rss.asp"]
+addresses = ["https://lenta.ru/rss", "https://tass.ru/rss/v2.xml", "https://www.interfax.ru/rss.asp"]
 for address in addresses:
     print(address)
-
-    feed = feedparser.parse(address)
 
     # for entry in feed.entries:
     #     print(entry.title)
@@ -12,9 +11,11 @@ for address in addresses:
     #     print(entry.get("published", "нет даты"))
     #     print("---")
     try:
-        feed = feedparser.parse(address)
+        response = requests.get(address, timeout=10)
+        response.raise_for_status()
+        feed = feedparser.parse(response.content)
         if feed.bozo:
-            print("Ошибка")
+            print("Ошибка:", feed.bozo_exception)
         else:
             print("Источник:", feed.feed.title)
             print("Новостей:", len(feed.entries))
