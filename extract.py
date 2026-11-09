@@ -1,15 +1,31 @@
 import feedparser
 import requests
+import pandas as pd
+import time 
+import os
+
+
 
 addresses = ["https://lenta.ru/rss", "https://tass.ru/rss/v2.xml", "https://www.interfax.ru/rss.asp"]
 
+def download(address, attempts=3):
+    for attempt in range(attempts):
+        try:
+            response = requests.get(address, timeout=10)
+            if response.status_code == 404:
+                break
+            elif response.status_code == 200:
+                return response.content
+            else: print ("Попытка", attempt, "плохой статус", response.status_code)
+        except Exception as e:
+            print("Попытка", attempt, "не удалась", e)
+        time.sleep(2)
+    raise Exception ("Не удалось скачать: "+ address)        
 def extract(addresses):
     news=[]
     for address in addresses:
         try:
-            response = requests.get(address, timeout=10)
-            response.raise_for_status()
-            feed = feedparser.parse(response.content)
+            feed = feedparser.parse(download(address))
             if feed.bozo:
                 print("Ошибка:", feed.bozo_exception)
             else:
@@ -29,5 +45,10 @@ def extract(addresses):
 
 rows=extract(addresses)
 print("Всего новостей:", len(rows))
-print(rows)
-            
+print(rows[0])
+
+df=pd.DataFrame(rows)
+print(df.head())
+df.info()
+os.makedirs("data", exist_ok=True)
+df.to_csv("data/raw_news.csv", index=False) 
