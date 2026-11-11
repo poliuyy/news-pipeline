@@ -20,7 +20,8 @@ def download(address, attempts=3):
         except Exception as e:
             print("Попытка", attempt, "не удалась", e)
         time.sleep(2)
-    raise Exception ("Не удалось скачать: "+ address)        
+    raise Exception ("Не удалось скачать: "+ address)
+        
 def extract(addresses):
     news=[]
     for address in addresses:
@@ -43,12 +44,13 @@ def extract(addresses):
             print(e)
     return news
 
-rows=extract(addresses)
-print("Всего новостей:", len(rows))
-print(rows[0])
+def run_extract():
+    rows=extract(addresses)
+    print("Всего новостей:", len(rows))
 
-df=pd.DataFrame(rows)
-print(df.head())
-df.info()
-os.makedirs("data", exist_ok=True)
-df.to_csv("data/raw_news.csv", index=False) 
+    df=pd.DataFrame(rows)
+    os.makedirs("data", exist_ok=True)
+    df.to_csv("data/raw_news.csv", index=False) 
+
+if __name__ == "__main__":
+    run_extract()
