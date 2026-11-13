@@ -47,10 +47,14 @@ def extract(addresses):
 def run_extract():
     rows=extract(addresses)
     print("Всего новостей:", len(rows))
+    if not rows:
+        print("Нет новостей, CSV не перезаписываю")
+        return False
 
     df=pd.DataFrame(rows)
     os.makedirs("data", exist_ok=True)
-    df.to_csv("data/raw_news.csv", index=False) 
+    df.to_csv("data/raw_news.csv", index=False)
+    return True
 
 if __name__ == "__main__":
     run_extract()

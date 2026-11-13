@@ -4,7 +4,9 @@ from load import run_load
 
 def main():
     print("===Extract===")
-    run_extract()
+    if not run_extract():
+        print("Пайплайн остановлен: нет данных")
+        return
 
     print("===Transform===")
     run_transform()
