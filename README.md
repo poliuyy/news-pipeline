@@ -2,7 +2,7 @@
 
 news-pipeline - ETL-пайплайн на Python, который каждый час собирает новости с новостных сайтов (Лента.ру, ТАСС, Интерфакс). Новости очищаются и сохраняются в PostgreSQL, где их можно анализировать с помощью SQL-запросов.
 
-![Схема пайплайна](C:\projects\news-pipeline\docs)
+![Схема пайплайна](docs/pipeline.png)
 
 ## Стек
 - Python: requests, feedparser, pandas, psycopg2, python-dotenv
