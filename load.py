@@ -2,6 +2,9 @@ import os
 import psycopg2
 import pandas as pd
 from dotenv import load_dotenv
+import logging
+
+logger = logging.getLogger(__name__)
 
 def run_load():
     load_dotenv()
@@ -34,7 +37,7 @@ def run_load():
 
     cur.execute("select count(*) from news;")
     after = cur.fetchone()[0]
-    print ("Было:", before, "Стало:", after, "Добавлено:", after - before)
+    logger.info(f"Было: {before} Стало: {after} Добавлено: {after - before}")
 
     cur.close()
     conn.close()

@@ -3,6 +3,9 @@ import requests
 import pandas as pd
 import time 
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -16,9 +19,9 @@ def download(address, attempts=3):
                 break
             elif response.status_code == 200:
                 return response.content
-            else: print ("Попытка", attempt, "плохой статус", response.status_code)
+            else: logger.warning(f"Попытка {attempt} плохой статус {response.status_code}")
         except Exception as e:
-            print("Попытка", attempt, "не удалась", e)
+            logger.warning(f"Попытка {attempt} не удалась: {e}")
         time.sleep(2)
     raise Exception ("Не удалось скачать: "+ address)
         
@@ -28,7 +31,7 @@ def extract(addresses):
         try:
             feed = feedparser.parse(download(address))
             if feed.bozo:
-                print("Ошибка:", feed.bozo_exception)
+                logger.warning(f"Ошибка: {feed.bozo_exception}")
             else:
                 for entry in feed.entries:
                     news.append({
@@ -38,18 +41,18 @@ def extract(addresses):
                         "source": feed.feed.title
                     })
                     
-                print("Источник:", feed.feed.title)
-                print("Новостей:", len(feed.entries))
+                logger.info(f"Источник: {feed.feed.title}")
+                logger.info(f"Новостей: {len(feed.entries)}")
         except Exception as e:
-            print(e)
+           logger.error(e)
     return news
 
 def run_extract():
     rows=extract(addresses)
-    print("Всего новостей:", len(rows))
+    logger.info(f"Всего новостей: {len(rows)}")
     if not rows:
-        print("Нет новостей, CSV не перезаписываю")
-        return False
+       logger.info(f"Нет новостей, CSV не перезаписываю")
+       return False
 
     df=pd.DataFrame(rows)
     os.makedirs("data", exist_ok=True)

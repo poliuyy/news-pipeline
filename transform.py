@@ -1,4 +1,7 @@
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 def run_transform():
     df = pd.read_csv("data/raw_news.csv")
@@ -8,16 +11,16 @@ def run_transform():
     source_names = {"Lenta.ru : Новости": "lenta", "ТАСС": "tass", "Интерфакс": "interfax"}
     df["source"]=df["source"].map(source_names)
 
-    print("До:", len(df))
+    logger.info(f"До: {len(df)}")
     df = df.drop_duplicates(subset="url")
     df = df.reset_index(drop=True)
-    print("После:", len(df))
+    logger.info(f"После: {len(df)}")
 
     df["loaded_at"] = pd.Timestamp.now(tz="UTC")
 
     df.to_csv("data/clean_news.csv", index=False)
 
-    print(df["source"].value_counts())
+    logger.info(f"По источникам: {df['source'].value_counts().to_dict()}")
 
 if __name__ == "__main__":
     run_transform()
